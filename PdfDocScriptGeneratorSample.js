@@ -179,9 +179,9 @@ class PdfDocScriptGeneratorSample {
 
     /**
      * @method onPageLoaded
-     * @param index {number}
-     * @param page {PDFjs_Page}
-     * @returns {}{Promise<void>}
+     * @param {number} index
+     * @param {PDFjs_Page} page
+     * @returns {Promise<void>}
      * */
     onPageLoaded(index, page) {
         return page.getTextContent().then(textContent => {
@@ -215,7 +215,7 @@ class PdfDocScriptGeneratorSample {
 
     /**
      * @method onGetScriptText
-     * @returns {}string
+     * @returns {string}
      * */
     onGetScriptText() {
         const split = this._scriptTemplate.toString().split(this.scriptTemplateMarker);
@@ -231,7 +231,7 @@ class PdfDocScriptGeneratorSample {
      * @param {PDFjs_TextContentItem} item
      * @param {PDFjs_Viewport} viewport
      * @param {PDFjs_TextContentStyle} style
-     * @returns {}{PdfPageText}
+     * @returns {PdfPageText}
      */
     _makeTextInfo(item, viewport, style) {
         const o = this._multiplyTransform(item.transform, viewport.transform);
@@ -262,7 +262,7 @@ class PdfDocScriptGeneratorSample {
      * @private
      * @param {PDFjs_Transform} t
      * @param {PDFjs_Transform} e
-     * @returns {}{PDFjs_Transform}
+     * @returns {PDFjs_Transform}
      * Like the result of Matrix T * Matrix E.
      */
     _multiplyTransform(t, e) {
@@ -282,7 +282,7 @@ class PdfDocScriptGeneratorSample {
      * @private
      * @param {PDFjs_Rect} r
      * @param {PDFjs_Transform} e
-     * @returns {}{PDFjs_Rect}
+     * @returns {PDFjs_Rect}
      */
     _transformRect(r, e) {
         /** @type {PDFjs_Transform[]} */
@@ -307,7 +307,7 @@ class PdfDocScriptGeneratorSample {
      * @private
      * @param {PDFjs_OperatorList} opList
      * @param {PDFjs_Viewport} viewport
-     * @returns {}{PdfPageRectangle[]}
+     * @returns {PdfPageRectangle[]}
      */
     _makeRectObjects(opList, viewport) {
         const revMap = this.pdfjs_opNameMap;
@@ -446,7 +446,7 @@ class PdfDocScriptGeneratorSample {
      * @param {PdfPage} page
      * @param {PdfPageText[]} texts
      * @param {PdfPageRectangle[]} rectangles
-     * @returns {}{void}
+     * @returns {void}
      * */
     _processPage(page, texts, rectangles) {
         this.allCompInfo[page.index] = [];
