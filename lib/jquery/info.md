@@ -1,0 +1,2 @@
+- jquery 3.7.1
+- jquery-ui 1.14.1
