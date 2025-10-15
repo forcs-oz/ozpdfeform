@@ -691,7 +691,7 @@ class PdfDocScriptGeneratorSample {
                     tsComp.SetBorderColor(icInfo.role.color);
 
                     comp.SetEventScript("OnValueChanged", [
-                        "var d = _FormatDate((new Date()).getTime(), \"yyyy-MM-dd hh:mm:ss\");",
+                        "var d = This.GetValue() ? _FormatDate((new Date()).getTime(), \"yyyy-MM-dd hh:mm:ss\") : \"\";",
                         "var tsName = \"" + tsName + "\";",
                         "var tsComp = This.GetInputComponent(tsName);",
                         "if (tsComp) tsComp.SetText(d);"
