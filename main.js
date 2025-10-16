@@ -1,22 +1,125 @@
+/**
+ * User-defined Option
+ * 
+ * @typedef {{
+ *      desc: string;
+ *      color?: string;
+ * }} PdfTargetOptionRole
+ * 
+ * @typedef {{
+ *      prefix: string;
+ *      id: string;
+ *      compType: string;
+ *      useTimestampLabel?: boolean;
+ *      roles: { [postfix: string]: PdfTargetOptionRole }
+ * }} PdfTargetOption
+ */
+
+/** @type {PdfTargetOption[]} */
 const sampleTargets = [
     {
-        prefix: "@SIGN",
+        prefix: "@",
+        id: "SIGN",
         compType: "SignPad",
         useTimestampLabel: true,
         roles: {
-            "DR": { desc: "Doctor", color: "#AA0000" },
-            "PA": { desc: "Patient", color: "#0000AA" },
-            "AG": { desc: "Agent", color: "#00AA00"},
-        },
+            "DR": {
+                desc: "担当医署名",
+            },
+            "PA": {
+                desc: "患者署名",
+            },
+            "AG": {
+                desc: "代理人署名",
+            }
+        }
+        /**
+         * - Text `@SIGN_DR` -> SignPad (id=`SIGN_DR`); Text `@SIGNTIME_DR` -> Timestamp Label (id=`SIGNTIME_DR`)
+         * - Text `@SIGN_PA` -> SignPad (id=`SIGN_PA`); Text `@SIGNTIME_PA` -> Timestamp Label (id=`SIGNTIME_PA`)
+         * - Text `@SIGN_AG` -> SignPad (id=`SIGN_AG`); Text `@SIGNTIME_AG` -> Timestamp Label (id=`SIGNTIME_AG`)
+         */
+    }, {
+        prefix: "@",
+        id: "TEXT",
+        compType: "TextBox",
+        roles: {
+            "PANAME": {
+                desc: "患者氏名"
+            },
+            "PAID": {
+                desc: "患者ID"
+            },
+            "PAADDRESS": {
+                desc: "患者住所"
+            },
+            "AGNAME": {
+                desc: "代理人氏名"
+            },
+            "AGADDRESS": {
+                desc: "代理人住所"
+            },
+            "DRNAME": {
+                desc: "担当医氏名"
+            },
+            "DPT": {
+                desc: "担当医科"
+            },
+            "OPNAME": {
+                desc: "手術名"
+            },
+            "OPNEED": {
+                desc: "手術目的"
+            },
+            "OPMETHOD": {
+                desc: "術式"
+            },
+            "NOTE": {
+                desc: "その他"
+            }
+        }
+    }, {
+        prefix: "@",
+        id: "DATE",
+        compType: "DateTimePicker",
+        roles: {
+            "OP": {
+                desc: "手術予定日"
+            }
+        }
+    }, {
+        prefix: "@",
+        id: "TEST",
+        compType: "SignPad",
+        useTimestampLabel: true,
+        roles: {
+            "DR": {
+                desc: "担当医",
+                color: "#AA0000"
+            },
+            "PA": {
+                desc: "患者",
+                color: "#0000AA"
+            },
+            "AG": {
+                desc: "代理人",
+                color: "#00AA00"
+            }
+        }
     }
 ];
 
 /** @type {{ [paramKey: string]: any }} */
 const ozViewerParams = {
+    // Required
     "information.debug": true,
     "connection.servlet": "https://dev-test.oz4cs.com/oz/server",
-    "comment.all": true,
     "viewer.emptyframe": true,
+    "eform.allow_duplicated_formid": true,
+    // Optional
+    "global.language": "ja_JP",
+    "viewer.viewmode": "fittowidth",
+    "eform.signpad_viewtype": "fittoframe",
+    "comment.all": true,
 };
 const ozViewerOpt = {
     "pdf_page_handler": (pdfDocId) => new PdfDocScriptGeneratorSample(pdfDocId, sampleTargets),

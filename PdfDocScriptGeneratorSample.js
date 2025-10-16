@@ -6,13 +6,14 @@
  * 
  * @typedef {{
  *      desc: string;
- *      color: string;
+ *      color?: string;
  * }} PdfTargetOptionRole
  * 
  * @typedef {{
  *      prefix: string;
+ *      id: string;
  *      compType: string;
- *      useTimestampLabel: boolean;
+ *      useTimestampLabel?: boolean;
  *      roles: { [postfix: string]: PdfTargetOptionRole }
  * }} PdfTargetOption
  */
@@ -34,7 +35,7 @@
  *     w: number;
  *     h: number;
  *     angle: number;
- *     ascent: number;
+ *     fontFamily: string;
  * }} PdfPageText
  * 
  * @typedef {{
@@ -54,8 +55,10 @@
  *     y: number;
  *     w: number;
  *     h: number;
+ *     fontSize: number;
+ *     fontFamily: string;
  *     role: PdfTargetOptionRole;
- *     timestamp?: PdfPageRectangle;
+ *     timestampName: string;
  * }} PdfICInfo
  * */
 
@@ -239,21 +242,21 @@ class PdfDocScriptGeneratorSample {
         if (style.vertical) {
             l += Math.PI / 2;
         }
-        const h = Math.sqrt(o[2] * o[2] + o[3] * o[3]);
-        let d = h;
+        const d = Math.sqrt(o[2] * o[2] + o[3] * o[3]);
+        let h = d;
         if (style.ascent) {
-            d = style.ascent * d;
+            h = style.ascent * h;
         } else if (style.descent) {
-            d = (1 + style.descent) * d;
+            h = (1 + style.descent) * h;
         }
         return {
             text: item.str,
             x: o[4] + (0 == l ? 0 : (d * Math.sin(l))),
-            y: o[5] - d * (0 == l ? 1 : Math.cos(l)),
+            y: o[5] - d * (0 == l ? 1 : Math.cos(l)) + 1,
             w: item.width,
             h,
             angle: l * (180 / Math.PI),
-            ascent: d,
+            fontFamily: style.fontFamily
         };
     }
 
@@ -456,17 +459,19 @@ class PdfDocScriptGeneratorSample {
             const compType = o.compType;
             Object.keys(o.roles).forEach(postfix => {
                 const role = o.roles[postfix];
-                const targetText = `${o.prefix}_${postfix}`;
+                const compName = `${o.id}_${postfix}`;
+                const targetText = `${o.prefix}${compName}`;
                 const foundItems = this._findMatchedTextItems(targetText, texts);
                 if (foundItems.length < 1) {
                     return;
                 }
 
-                const targetTimestampText = `${o.prefix}TIME_${postfix}`;
+                const timestampName = `${o.id}TIME_${postfix}`;
+                const targetTimestampText = `${o.prefix}${timestampName}`;
                 const foundTimestamps = o.useTimestampLabel ? this._findMatchedTextItems(targetTimestampText, texts) : [];
-                const matchedTimestamps = this._findGreedyClosestPairs(foundItems, foundTimestamps);
+                const pointPerPixcel = 96.0 / 72.0;
 
-                foundItems.forEach((item, index) => {
+                foundItems.forEach(item => {
                     const referRects = rectangles.filter(r => (
                         r.x < item.x
                         && r.y < item.y
@@ -479,9 +484,7 @@ class PdfDocScriptGeneratorSample {
                         }
                         return a.h - b.h;
                     });
-                    const compName = `PdfPage${page.index}_IC${pageCompInfo.length}_${compType}`;
-                    const referRect = referRects.shift() || this._getResizeRect(item, page, 30, 20);
-                    const timestamp = matchedTimestamps[index] || undefined;
+                    const referRect = referRects.shift() || this._getResizeRect(item, page, 2, 2);
                     pageCompInfo.push({
                         type: compType,
                         name: compName,
@@ -489,10 +492,26 @@ class PdfDocScriptGeneratorSample {
                         y: referRect.y,
                         w: referRect.w,
                         h: referRect.h,
+                        fontSize: item.h * pointPerPixcel,
+                        fontFamily: item.fontFamily,
                         role,
-                        timestamp: timestamp ? this._getResizeRect(timestamp, page) : undefined,
+                        timestampName: foundTimestamps.length > 0 ? timestampName : ""
                     });
-                })
+                });
+                foundTimestamps.forEach(timestamp => {
+                    pageCompInfo.push({
+                        type: "None",
+                        name: timestampName,
+                        x: timestamp.x,
+                        y: timestamp.y,
+                        w: timestamp.w,
+                        h: timestamp.h,
+                        fontSize: timestamp.h * pointPerPixcel,
+                        fontFamily: timestamp.fontFamily,
+                        role,
+                        timestampName
+                    });
+                });
             });
         });
     }
@@ -507,10 +526,10 @@ class PdfDocScriptGeneratorSample {
     _findMatchedTextItems(targetText, allItems) {
         /** @type {PdfPageText[]} foundItems */
         const foundItems = [];
-        const query = targetText.replace(/ /gi, "");
+        const query = this._replaceChars(targetText);
         for (let i = 0; i < allItems.length; i++) {
             const item = allItems[i];
-            const itemText = item.text.replace(/ /gi, "");
+            const itemText = this._replaceChars(item.text);
             if (!query.startsWith(itemText)) {
                 continue;
             }
@@ -525,7 +544,7 @@ class PdfDocScriptGeneratorSample {
             let nextIndex = itemText.length;
             for (let j = i + 1; j < allItems.length && nextIndex < query.length; j++) {
                 const nextItem = allItems[j];
-                const nextItemText = nextItem.text.replace(/ /gi, "");
+                const nextItemText = this._replaceChars(nextItem.text);
                 const nextQuery = query.slice(nextIndex);
                 if (!nextQuery.startsWith(nextItemText)) {
                     pieces.length = 0;
@@ -563,61 +582,18 @@ class PdfDocScriptGeneratorSample {
     }
 
     /**
-     * @method _findGreedyClosestPairs
+     * @method _replaceChars
      * @private
-     * @param {PdfPageText[]} compItems
-     * @param {PdfPageText[]} timestamps
-     * @returns {(PdfPageRectangle|null)[]}
+     * @param {string} text
+     * @
      */
-    _findGreedyClosestPairs(compItems, timestamps) {
-        /**
-         * @type {(PdfPageRectangle|null)[]}
-         * */
-        const result = Array(compItems.length).fill(null);
-        if (compItems.length < 1 || timestamps.length < 1) {
-            return result;
-        }
-
-        /**
-         * @type {{
-         *      compIndex: number;
-         *      tsIndex: number;
-         *      distance: number;
-         * }[]}
-         */
-        const allPairs = [];
-        compItems.forEach((c, compIndex) => {
-            timestamps.forEach((l, tsIndex) => {
-                const dx = (c.x + c.w / 2) - (l.x + l.w / 2);
-                const dy = (c.y + c.h / 2) - (l.y + l.h / 2);
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                allPairs.push({
-                    compIndex,
-                    tsIndex,
-                    distance
-                });
+    _replaceChars(text) {
+        return text
+            .replace(/[ |　]/g, "")  // Remove space (half/full)
+            .replace(/[！-～]/g, function(char) {
+                // Replace full-width ('！' ~ '～') to half-width ('!'~'~')
+                return String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
             });
-        });
-        allPairs.sort((a, b) => a.distance - b.distance);
-
-        /** @type {Set<number>} */
-        const matchedIndices = new Set();
-        for (const p of allPairs) {
-            if (result[p.compIndex] === null && !matchedIndices.has(p.tsIndex)) {
-                const labelItem = timestamps[p.tsIndex];
-                result[p.compIndex] = {
-                    x: labelItem.x,
-                    y: labelItem.y,
-                    w: Math.max(labelItem.w, 120),
-                    h: Math.max(labelItem.h, 20),
-                };
-                matchedIndices.add(p.tsIndex);
-            }
-            if (matchedIndices.size == timestamps.length) {
-                break;
-            }
-        }
-        return result;
     }
 
     /**
@@ -666,36 +642,48 @@ class PdfDocScriptGeneratorSample {
                 if (!comp) {
                     continue;
                 }
+
                 comp.SetTransparent(true);
-                comp.SetBorderColor(icInfo.role.color);
-                comp.SetTopBorderDash("2 2");
-                comp.SetRightBorderDash("2 2");
-                comp.SetBottomBorderDash("2 2");
-                comp.SetLeftBorderDash("2 2");
-                comp.SetTopBorderThickness(2);
-                comp.SetRightBorderThickness(2);
-                comp.SetBottomBorderThickness(2);
-                comp.SetLeftBorderThickness(2);
-
-                var tsInfo = icInfo.timestamp;
-                if (tsInfo) {
-                    var tsName = icInfo.name + "_TIME";
-                    var tsComp = page.AddNewInputComponent(
-                        "None", tsName,
-                        tsInfo.x, tsInfo.y, tsInfo.w, tsInfo.h
-                    );
-                    if (!tsComp) {
-                        continue;
+                comp.SetTooltipText(icInfo.role.desc);
+                comp.SetFontName(icInfo.fontFamily);
+                comp.SetFontSize(icInfo.fontSize);
+                if (icInfo.name != icInfo.timestampName) {
+                    // Input Component
+                    comp.SetHorizontalTextAlignment(HorizontalTextAlignmentConst.Left);
+                    comp.SetVerticalTextAlignment(VerticalTextAlignmentConst.Middle);
+                    if (icInfo.role.color) {
+                        comp.SetShowBorder(true);
+                        comp.SetBorderColor(icInfo.role.color);
+                    } else {
+                        comp.SetShowBorder(false);
                     }
-                    tsComp.SetTextColor(icInfo.role.color);
-                    tsComp.SetBorderColor(icInfo.role.color);
-
-                    comp.SetEventScript("OnValueChanged", [
-                        "var d = This.GetValue() ? _FormatDate((new Date()).getTime(), \"yyyy-MM-dd hh:mm:ss\") : \"\";",
-                        "var tsName = \"" + tsName + "\";",
-                        "var tsComp = This.GetInputComponent(tsName);",
-                        "if (tsComp) tsComp.SetText(d);"
-                    ].join("\n"));
+                    switch (icInfo.type) {
+                        case "TextBox":
+                            comp.SetLeftInternalMargin(5);
+                            comp.SetPlaceholderText(icInfo.role.desc);
+                            break;
+                        case "DateTimePicker":
+                            comp.SetInputValue(icInfo.name, "Today");
+                            comp.SetFormat("date_ yyyy年 MM月 dd日");
+                            comp.ApplyFormat();
+                            break;
+                    }
+                    if (icInfo.timestampName) {
+                        comp.SetEventScript("OnValueChanged", [
+                            "var date = This.GetValue() ? _FormatDate((new Date()).getTime(), \"yyyy年 MM月 dd日\") : \"\";",
+                            "var tsName = \"" + icInfo.timestampName + "\";",
+                            "var oldDate = This.GetInputValue(tsName);",
+                            "if (oldDate != date) This.SetInputValue(tsName, date);"
+                        ].join("\n"));
+                    }
+                } else {
+                    // Timestamp Label
+                    comp.SetHorizontalTextAlignment(HorizontalTextAlignmentConst.Left);
+                    comp.SetClipping(false);
+                    comp.SetShowBorder(false);
+                    if (icInfo.role.color) {
+                        comp.SetTextColor(icInfo.role.color);
+                    }
                 }
             }
         }
