@@ -336,6 +336,7 @@ class PdfDocScriptGeneratorSample {
         const vEdgeRects = [];
         /** @type {PDFjs_Rect|undefined} */
         let path = undefined;
+        let fillColor = "";
         fnArray.forEach((opValue, i) => {
             const opKey = revMap[opValue];
             const args = argsArray[i];
@@ -347,7 +348,7 @@ class PdfDocScriptGeneratorSample {
                         && args[1].length === 4
                     ) {
                         if (args[0][0] === 19 && args[1][2] * args[1][3] > 0) {
-                            path = args[1];
+                            path = this._transformRect(args[1], viewport.transform);
                         } else {
                             path = undefined;
                         }
@@ -362,12 +363,19 @@ class PdfDocScriptGeneratorSample {
                         path = undefined;
                     }
                     break;
+                case "setFillRGBColor":
+                    if (args.length >= 3) {
+                        fillColor = "#" + Array.from(args).slice(0, 3).map(n => n.toString(16)).join("").toUpperCase();
+                    } else {
+                        fillColor = "";
+                    }
+                    break;
                 case "eoFill":
                     if (path) {
                         const pathString = path.toString();
                         if (path[2] >= 1) {
                             if (path[3] >= 1) {
-                                if (!fillRects.some(p => p.toString() == pathString)) {
+                                if (fillColor && !fillRects.some(p => p.toString() == pathString)) {
                                     fillRects.push(path);
                                 }
                             } else {
@@ -385,6 +393,7 @@ class PdfDocScriptGeneratorSample {
                     break;
                 case "endPath":
                     path = undefined;
+                    fillColor = "";
                     break;
             }
         });
@@ -431,13 +440,12 @@ class PdfDocScriptGeneratorSample {
         });
 
         return rects.map(rect => {
-            const tfRect = this._transformRect(rect, viewport.transform);
             /** @type {PdfPageRectangle} */
             const rectInfo = {
-                x: tfRect[0],
-                y: tfRect[1],
-                w: tfRect[2],
-                h: tfRect[3],
+                x: rect[0],
+                y: rect[1],
+                w: rect[2],
+                h: rect[3],
             };
             return rectInfo;
         });
