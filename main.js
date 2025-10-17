@@ -11,6 +11,8 @@
  *      id: string;
  *      compType: string;
  *      useTimestampLabel?: boolean;
+ *      bgColorBeforeInput?: string;
+ *      bgColorAfterInput?: string;
  *      roles: { [postfix: string]: PdfTargetOptionRole }
  * }} PdfTargetOption
  */
@@ -22,6 +24,8 @@ const sampleTargets = [
         id: "SIGN",
         compType: "SignPad",
         useTimestampLabel: true,
+        bgColorBeforeInput: "#F0F0F0",
+        bgColorAfterInput: "#FFFFFF",
         roles: {
             "DR": {
                 desc: "担当医署名",

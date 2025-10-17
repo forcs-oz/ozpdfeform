@@ -14,6 +14,8 @@
  *      id: string;
  *      compType: string;
  *      useTimestampLabel?: boolean;
+ *      bgColorBeforeInput?: string;
+ *      bgColorAfterInput?: string;
  *      roles: { [postfix: string]: PdfTargetOptionRole }
  * }} PdfTargetOption
  */
@@ -57,6 +59,8 @@
  *     h: number;
  *     fontSize: number;
  *     fontFamily: string;
+ *     bgColorBeforeInput: string;
+ *     bgColorAfterInput: string;
  *     role: PdfTargetOptionRole;
  *     timestampName: string;
  * }} PdfICInfo
@@ -478,6 +482,8 @@ class PdfDocScriptGeneratorSample {
                 const targetTimestampText = `${o.prefix}${timestampName}`;
                 const foundTimestamps = o.useTimestampLabel ? this._findMatchedTextItems(targetTimestampText, texts) : [];
                 const pointPerPixcel = 96.0 / 72.0;
+                const bgColorBeforeInput = o.bgColorBeforeInput || "#FFFFFF";
+                const bgColorAfterInput = o.bgColorAfterInput || "#FFFFFF";
 
                 foundItems.forEach(item => {
                     const referRects = rectangles.filter(r => (
@@ -502,6 +508,8 @@ class PdfDocScriptGeneratorSample {
                         h: referRect.h,
                         fontSize: item.h * pointPerPixcel,
                         fontFamily: item.fontFamily,
+                        bgColorBeforeInput,
+                        bgColorAfterInput,
                         role,
                         timestampName: foundTimestamps.length > 0 ? timestampName : ""
                     });
@@ -516,6 +524,8 @@ class PdfDocScriptGeneratorSample {
                         h: timestamp.h,
                         fontSize: timestamp.h * pointPerPixcel,
                         fontFamily: timestamp.fontFamily,
+                        bgColorBeforeInput,
+                        bgColorAfterInput,
                         role,
                         timestampName
                     });
@@ -650,8 +660,7 @@ class PdfDocScriptGeneratorSample {
                 if (!comp) {
                     continue;
                 }
-
-                comp.SetTransparent(true);
+                
                 comp.SetTooltipText(icInfo.role.desc);
                 comp.SetFontName(icInfo.fontFamily);
                 comp.SetFontSize(icInfo.fontSize);
@@ -659,6 +668,7 @@ class PdfDocScriptGeneratorSample {
                     // Input Component
                     comp.SetHorizontalTextAlignment(HorizontalTextAlignmentConst.Left);
                     comp.SetVerticalTextAlignment(VerticalTextAlignmentConst.Middle);
+                    comp.SetBackgroundColor(icInfo.bgColorBeforeInput);
                     if (icInfo.role.color) {
                         comp.SetShowBorder(true);
                         comp.SetBorderColor(icInfo.role.color);
@@ -666,9 +676,13 @@ class PdfDocScriptGeneratorSample {
                         comp.SetShowBorder(false);
                     }
                     switch (icInfo.type) {
+                        case "SignPad":
+                            comp.SetShowBorder(true);
+                            break;
                         case "TextBox":
                             comp.SetLeftInternalMargin(5);
                             comp.SetPlaceholderText(icInfo.role.desc);
+                            comp.SetMultiLine(false);
                             break;
                         case "DateTimePicker":
                             comp.SetInputValue(icInfo.name, "Today");
@@ -678,7 +692,9 @@ class PdfDocScriptGeneratorSample {
                     }
                     if (icInfo.timestampName) {
                         comp.SetEventScript("OnValueChanged", [
-                            "var date = This.GetValue() ? _FormatDate((new Date()).getTime(), \"yyyy年 MM月 dd日\") : \"\";",
+                            "var value = This.GetValue();",
+                            "This.SetBackgroundColor(value ? \"" + icInfo.bgColorAfterInput + "\" : \"" + icInfo.bgColorBeforeInput + "\");",
+                            "var date = value ? _FormatDate((new Date()).getTime(), \"yyyy年 MM月 dd日\") : \"\";",
                             "var tsName = \"" + icInfo.timestampName + "\";",
                             "var oldDate = This.GetInputValue(tsName);",
                             "if (oldDate != date) This.SetInputValue(tsName, date);"
