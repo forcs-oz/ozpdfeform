@@ -18,8 +18,8 @@
 
 #ctrl-cont {
     position: fixed;
+    top: 50px;
     right: 20px;
-    bottom: 20px;
 
     width: 200px;
     height: 150px;
@@ -32,7 +32,7 @@
     align-items: stretch;
 
     border: none;
-    background-color: rgb(250, 213, 165);
+    background-color: rgb(250, 213, 165, 0.8);
     box-shadow: 3px 3px 10px gray;
 }
 
@@ -52,12 +52,6 @@
 
 #input-pdf {
     height: 4em;
-}
-
-#table-wrapper {
-    flex: 1 1 auto;
-    padding: .5em;
-    font-family: "Cascadia Code", "Consolas", sans-serif;
 }
 
 #button-run {

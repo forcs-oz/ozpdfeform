@@ -2,7 +2,7 @@
  * User-defined Option
  * 
  * @typedef {{
- *      desc: string;
+ *      desc?: string;
  *      color?: string;
  * }} PdfTargetOptionRole
  * 
@@ -10,10 +10,9 @@
  *      prefix: string;
  *      id: string;
  *      compType: string;
- *      useTimestampLabel?: boolean;
- *      bgColorBeforeInput?: string;
- *      bgColorAfterInput?: string;
  *      roles: { [postfix: string]: PdfTargetOptionRole }
+ *      useTimestampLabel?: boolean;
+ *      fontFamily?: string;
  * }} PdfTargetOption
  */
 
@@ -24,8 +23,7 @@ const sampleTargets = [
         id: "SIGN",
         compType: "SignPad",
         useTimestampLabel: true,
-        bgColorBeforeInput: "#F0F0F0",
-        bgColorAfterInput: "#FFFFFF",
+        fontFamily: "Yu Mincho",
         roles: {
             "DR": {
                 desc: "担当医署名",
@@ -46,6 +44,7 @@ const sampleTargets = [
         prefix: "@",
         id: "TEXT",
         compType: "TextBox",
+        fontFamily: "Yu Mincho",
         roles: {
             "PANAME": {
                 desc: "患者氏名"
@@ -85,6 +84,7 @@ const sampleTargets = [
         prefix: "@",
         id: "DATE",
         compType: "DateTimePicker",
+        fontFamily: "Yu Mincho",
         roles: {
             "OP": {
                 desc: "手術予定日"
@@ -94,6 +94,7 @@ const sampleTargets = [
         prefix: "@",
         id: "TEST",
         compType: "SignPad",
+        fontFamily: "Meiryo UI",
         useTimestampLabel: true,
         roles: {
             "DR": {
@@ -126,7 +127,10 @@ const ozViewerParams = {
     "comment.all": true,
 };
 const ozViewerOpt = {
+    // Required
     "pdf_page_handler": (pdfDocId) => new PdfDocScriptGeneratorSample(pdfDocId, sampleTargets),
+    // Optional
+    // "mstyle": true,
 };
 const ozViewerId = "OZViewer";
 const selectedPdf = {

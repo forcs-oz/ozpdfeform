@@ -5,7 +5,7 @@
  * User-defined Option
  * 
  * @typedef {{
- *      desc: string;
+ *      desc?: string;
  *      color?: string;
  * }} PdfTargetOptionRole
  * 
@@ -13,10 +13,9 @@
  *      prefix: string;
  *      id: string;
  *      compType: string;
- *      useTimestampLabel?: boolean;
- *      bgColorBeforeInput?: string;
- *      bgColorAfterInput?: string;
  *      roles: { [postfix: string]: PdfTargetOptionRole }
+ *      useTimestampLabel?: boolean;
+ *      fontFamily?: string;
  * }} PdfTargetOption
  */
 /**
@@ -37,7 +36,6 @@
  *     w: number;
  *     h: number;
  *     angle: number;
- *     fontFamily: string;
  * }} PdfPageText
  * 
  * @typedef {{
@@ -259,8 +257,7 @@ class PdfDocScriptGeneratorSample {
             y: o[5] - d * (0 == l ? 1 : Math.cos(l)) + 1,
             w: item.width,
             h,
-            angle: l * (180 / Math.PI),
-            fontFamily: style.fontFamily
+            angle: l * (180 / Math.PI)
         };
     }
 
@@ -482,8 +479,7 @@ class PdfDocScriptGeneratorSample {
                 const targetTimestampText = `${o.prefix}${timestampName}`;
                 const foundTimestamps = o.useTimestampLabel ? this._findMatchedTextItems(targetTimestampText, texts) : [];
                 const pointPerPixcel = 96.0 / 72.0;
-                const bgColorBeforeInput = o.bgColorBeforeInput || "#FFFFFF";
-                const bgColorAfterInput = o.bgColorAfterInput || "#FFFFFF";
+                const fontFamily = o.fontFamily;
 
                 foundItems.forEach(item => {
                     const referRects = rectangles.filter(r => (
@@ -507,9 +503,7 @@ class PdfDocScriptGeneratorSample {
                         w: referRect.w,
                         h: referRect.h,
                         fontSize: item.h * pointPerPixcel,
-                        fontFamily: item.fontFamily,
-                        bgColorBeforeInput,
-                        bgColorAfterInput,
+                        fontFamily,
                         role,
                         timestampName: foundTimestamps.length > 0 ? timestampName : ""
                     });
@@ -523,9 +517,7 @@ class PdfDocScriptGeneratorSample {
                         w: timestamp.w,
                         h: timestamp.h,
                         fontSize: timestamp.h * pointPerPixcel,
-                        fontFamily: timestamp.fontFamily,
-                        bgColorBeforeInput,
-                        bgColorAfterInput,
+                        fontFamily,
                         role,
                         timestampName
                     });
@@ -661,14 +653,14 @@ class PdfDocScriptGeneratorSample {
                     continue;
                 }
                 
-                comp.SetTooltipText(icInfo.role.desc);
+                comp.SetTransparent(true);
+                comp.SetTooltipText(icInfo.role.desc || "");
                 comp.SetFontName(icInfo.fontFamily);
                 comp.SetFontSize(icInfo.fontSize);
                 if (icInfo.name != icInfo.timestampName) {
                     // Input Component
                     comp.SetHorizontalTextAlignment(HorizontalTextAlignmentConst.Left);
                     comp.SetVerticalTextAlignment(VerticalTextAlignmentConst.Middle);
-                    comp.SetBackgroundColor(icInfo.bgColorBeforeInput);
                     if (icInfo.role.color) {
                         comp.SetShowBorder(true);
                         comp.SetBorderColor(icInfo.role.color);
@@ -676,12 +668,9 @@ class PdfDocScriptGeneratorSample {
                         comp.SetShowBorder(false);
                     }
                     switch (icInfo.type) {
-                        case "SignPad":
-                            comp.SetShowBorder(true);
-                            break;
                         case "TextBox":
                             comp.SetLeftInternalMargin(5);
-                            comp.SetPlaceholderText(icInfo.role.desc);
+                            comp.SetPlaceholderText(icInfo.role.desc || "");
                             comp.SetMultiLine(false);
                             break;
                         case "DateTimePicker":
@@ -693,7 +682,6 @@ class PdfDocScriptGeneratorSample {
                     if (icInfo.timestampName) {
                         comp.SetEventScript("OnValueChanged", [
                             "var value = This.GetValue();",
-                            "This.SetBackgroundColor(value ? \"" + icInfo.bgColorAfterInput + "\" : \"" + icInfo.bgColorBeforeInput + "\");",
                             "var date = value ? _FormatDate((new Date()).getTime(), \"yyyy年 MM月 dd日\") : \"\";",
                             "var tsName = \"" + icInfo.timestampName + "\";",
                             "var oldDate = This.GetInputValue(tsName);",
