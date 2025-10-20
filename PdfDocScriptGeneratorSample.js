@@ -657,6 +657,7 @@ class PdfDocScriptGeneratorSample {
                 comp.SetTooltipText(icInfo.role.desc || "");
                 comp.SetFontName(icInfo.fontFamily);
                 comp.SetFontSize(icInfo.fontSize);
+                comp.SetMovable(true);
                 if (icInfo.name != icInfo.timestampName) {
                     // Input Component
                     comp.SetHorizontalTextAlignment(HorizontalTextAlignmentConst.Left);
