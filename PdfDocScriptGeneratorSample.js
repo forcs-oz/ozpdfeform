@@ -9,13 +9,20 @@
  *      color?: string;
  * }} PdfTargetOptionRole
  * 
+ * @typedef {"Button"|"RadioButton"|"CheckBox"|"TextBox"|"ComboBox"
+ *      |"SignPad"|"VoiceRecorder"|"DateTimePicker"|"NumericUpDown"
+ *      |"RadioButtonGroup"|"ImagePicker"|"ToggleButton"|"VideoPlayer"
+ *      |"AttachmentButton"
+ * } OZInputCompType
+ * 
  * @typedef {{
  *      prefix: string;
  *      id: string;
- *      compType: string;
+ *      compType: OZInputCompType|"None";
  *      roles: { [postfix: string]: PdfTargetOptionRole }
  *      useTimestampLabel?: boolean;
  *      fontFamily?: string;
+ *      dateFormat?: string;
  * }} PdfTargetOption
  */
 /**
@@ -49,7 +56,7 @@
  * Input component settings
  * 
  * @typedef {{
- *     type: string;
+ *     type: OZInputCompType|"None";
  *     name: string;
  *     x: number;
  *     y: number;
@@ -61,6 +68,7 @@
  *     bgColorAfterInput: string;
  *     role: PdfTargetOptionRole;
  *     timestampName: string;
+ *     dateFormat: string;
  * }} PdfICInfo
  * */
 
@@ -480,6 +488,7 @@ class PdfDocScriptGeneratorSample {
                 const foundTimestamps = o.useTimestampLabel ? this._findMatchedTextItems(targetTimestampText, texts) : [];
                 const pointPerPixcel = 96.0 / 72.0;
                 const fontFamily = o.fontFamily;
+                const dateFormat = o.dateFormat || "yyyy/MM/dd hh:mm:ss";
 
                 foundItems.forEach(item => {
                     const referRects = rectangles.filter(r => (
@@ -505,7 +514,8 @@ class PdfDocScriptGeneratorSample {
                         fontSize: item.h * pointPerPixcel,
                         fontFamily,
                         role,
-                        timestampName: foundTimestamps.length > 0 ? timestampName : ""
+                        timestampName: foundTimestamps.length > 0 ? timestampName : "",
+                        dateFormat,
                     });
                 });
                 foundTimestamps.forEach(timestamp => {
@@ -519,7 +529,8 @@ class PdfDocScriptGeneratorSample {
                         fontSize: timestamp.h * pointPerPixcel,
                         fontFamily,
                         role,
-                        timestampName
+                        timestampName,
+                        dateFormat,
                     });
                 });
             });
@@ -676,14 +687,14 @@ class PdfDocScriptGeneratorSample {
                             break;
                         case "DateTimePicker":
                             comp.SetInputValue(icInfo.name, "Today");
-                            comp.SetFormat("date_ yyyy年 MM月 dd日");
+                            comp.SetFormat("date_ " + icInfo.dateFormat);
                             comp.ApplyFormat();
                             break;
                     }
                     if (icInfo.timestampName) {
                         comp.SetEventScript("OnValueChanged", [
                             "var value = This.GetValue();",
-                            "var date = value ? _FormatDate((new Date()).getTime(), \"yyyy年 MM月 dd日\") : \"\";",
+                            "var date = value ? _FormatDate((new Date()).getTime(), \"" + icInfo.dateFormat + "\") : \"\";",
                             "var tsName = \"" + icInfo.timestampName + "\";",
                             "var oldDate = This.GetInputValue(tsName);",
                             "if (oldDate != date) This.SetInputValue(tsName, date);"

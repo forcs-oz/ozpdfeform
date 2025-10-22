@@ -6,13 +6,20 @@
  *      color?: string;
  * }} PdfTargetOptionRole
  * 
+ * @typedef {"Button"|"RadioButton"|"CheckBox"|"TextBox"|"ComboBox"
+ *      |"SignPad"|"VoiceRecorder"|"DateTimePicker"|"NumericUpDown"
+ *      |"RadioButtonGroup"|"ImagePicker"|"ToggleButton"|"VideoPlayer"
+ *      |"AttachmentButton"
+ * } OZInputCompType
+ * 
  * @typedef {{
  *      prefix: string;
  *      id: string;
- *      compType: string;
+ *      compType: OZInputCompType|"None";
  *      roles: { [postfix: string]: PdfTargetOptionRole }
  *      useTimestampLabel?: boolean;
  *      fontFamily?: string;
+ *      dateFormat?: string;
  * }} PdfTargetOption
  */
 
@@ -24,6 +31,7 @@ const sampleTargets = [
         compType: "SignPad",
         useTimestampLabel: true,
         fontFamily: "Yu Mincho",
+        dateFormat: "yyyy年 MM月 dd日",
         roles: {
             "DR": {
                 desc: "担当医署名",
@@ -85,6 +93,7 @@ const sampleTargets = [
         id: "DATE",
         compType: "DateTimePicker",
         fontFamily: "Yu Mincho",
+        dateFormat: "yyyy年 MM月 dd日",
         roles: {
             "OP": {
                 desc: "手術予定日"
@@ -113,6 +122,42 @@ const sampleTargets = [
     }
 ];
 
+/**
+ * Style JSON
+ * - `eform.stylejson`
+ * - Req 4813
+ * 
+ * @typedef {{
+ *      Condition: ""|"Empty"|"Nonempty"|"Required"|"Optional"|"Enable"|"Disable";
+ *      HighlightFillColor?: string;
+ *      HighlightStrokeColor?: string;
+ *      HighlightStrokeThickness?: number;
+ *      BackgroundColor?: string;
+ * }} OZStyleJsonItemCondition
+ * 
+ * @typedef {{
+ *      ClassName: OZInputCompType|"InputValue"|"*";
+ *      Conditional: OZStyleJsonItemCondition[];
+ * }} OZStyleJsonItem
+ */
+
+/** @type {OZStyleJsonItem|OZStyleJsonItem[]} */
+const ozViewerStyleJson = [
+    {
+        ClassName: "InputValue",
+        Conditional: [
+            {
+                Condition: "Optional",
+                HighlightStrokeColor: "#FF00007F",
+                HighlightStrokeThickness: "2"
+            }, {
+                Condition: "",
+                HighlightFillColor: "#CCE1F27F"
+            }
+        ]
+    }
+];
+
 /** @type {{ [paramKey: string]: any }} */
 const ozViewerParams = {
     // Required
@@ -125,6 +170,8 @@ const ozViewerParams = {
     "viewer.viewmode": "fittowidth",
     "eform.signpad_viewtype": "fittoframe",
     "comment.all": true,
+    "eform.highlight_duration": 2000,
+    "eform.stylejson": ozViewerStyleJson,
 };
 const ozViewerOpt = {
     // Required

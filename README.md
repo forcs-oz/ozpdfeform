@@ -62,6 +62,7 @@ const sampleTargets = [
         compType: "SignPad",
         useTimestampLabel: true,
         fontFamily: "Yu Mincho",
+        dateFormat: "yyyy年 MM月 dd日",
         roles: {
             "DR": {
                 desc: "担当医署名",
@@ -106,6 +107,9 @@ const sampleTargets = [
 - `roles`の`color`によって、ラベルコンポーネントのテキストの色は、各々`黒, 黒, "#AA0000"`になります。
 <br>`roles`의 `color`에 의해, 라벨 컴포넌트의 텍스트 색은 각각 `검은색, 검은색, "#AA0000"`으로 됩니다.
 
+- `dateFormat: "yyyy年 MM月 dd日"`によって、ラベルコンポーネントの日付表示形式は`yyyy年 MM月 dd日`になります。
+<br>`dateFormat: "yyyy年 MM月 dd日"`에 의해, 라벨 컴포넌트의 날짜표시형식은 `yyyy年 MM月 dd日`가 됩니다.
+
 
 #### 詳細 / 상세
 
@@ -117,6 +121,7 @@ interface PdfTargetOption {
      roles: { [postfix: string]: PdfTargetOptionRole }
      useTimestampLabel?: boolean;
      fontFamily?: string;
+     dateFormat?: string;
 }
 
 interface PdfTargetOptionRole {
@@ -142,6 +147,9 @@ interface PdfTargetOptionRole {
 
 - `fontFamily`に値が設定された場合、入力コンポーネントとラベルコンポーネントのフォント名がその値になります。
 <br>`fontFamily`에 값이 설정된 경우, 입력 컴포넌트와 라벨 컴포넌트의 폰트명이 그 값으로 됩니다.
+
+- `dateFormat`に値が設定された場合、入力コンポーネントとラベルコンポーネントの日付表示形式がその値になります。デフォルトは`yyyy/MM/dd hh:mm:ss`です。
+<br>`dateFormat`에 값이 설정된 경우, 입력 컴포넌트와 라벨 컴포넌트의 날짜표시형식이 그 값으로 됩니다. 디폴트는 `yyyy/MM/dd hh:mm:ss`입니다.
 
 
 ### 2. PDFファイルの作成 / PDF 파일 작성
