@@ -144,9 +144,12 @@ with (__oznamespace__) {
 	extfun.setResLang("ID_OPT_SEARCH", "検索...");
 	extfun.setResLang("ID_VIEW_PAGESETUP", "ページ設定");
 	extfun.setResLang("ID_VIEW_REPORT_EXPLORER", "レポート ツリー");
-	extfun.setResLang("ID_CLOSE_REPORT_EXPLORER", "Close the tree");	
+	extfun.setResLang("ID_CLOSE_REPORT_EXPLORER", "ツリー非表示");
 	extfun.setResLang("ID_VIEW_REPORT_THUMBNAIL", "ページのサムネール表示");
-	extfun.setResLang("ID_CLOSE_REPORT_THUMBNAIL", "Close the thumbnail");
+	extfun.setResLang("ID_CLOSE_REPORT_THUMBNAIL", "サムネール非表示");
+	extfun.setResLang("ID_VIEW_REQUIRED", "必須入力項目表示");
+	extfun.setResLang("ID_VIEW_SIDEBAR", "サイドバー表示");
+	extfun.setResLang("ID_CLOSE_SIDEBAR", "サイドバー非表示");
 	extfun.setResLang("ID_EXPORT_XLSX", "XLSX 保存");
 	extfun.setResLang("IDS_MSG_PRINT_JOB_SUCCESS", "正常的に出力されました。");
 	extfun.setResLang("IDS_MESSAGE_COPY_CLIPBOARD", "クリップボードにコピーされました。");
@@ -400,6 +403,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_OPT_MHT_SAVE", "MHT保存の設定");
 	extfun.setResLang("IDS_OPT_SAVE_FORM", "保存形式");
 	extfun.setResLang("IDS_OPT_PAGE", "ページ");
+	extfun.setResLang("IDS_OPT_PAGE_N", "{N}ページ");
 	extfun.setResLang("IDS_OPT_FONT", "フォント");
 	extfun.setResLang("IDS_OPT_FORMAT", "書式");
 	extfun.setResLang("IDS_OPT_AUTO_FIT", "次のページ数に合わせる");
@@ -725,6 +729,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_BORDER_USER", "ユーザー指定");
 	extfun.setResLang("ID_TITLEBAR_THUMBNAIL_TITLE", "ページのサムネール");
 	extfun.setResLang("ID_TITLEBAR_TREE_TITLE", "ツリー");
+	extfun.setResLang("ID_TITLEBAR_REQUIRED_TITLE", "必須入力項目");
 	extfun.setResLang("IDS_SEAL_DESCRIPTION", "Please align the seal recognition area with the green guidelines.");
 	extfun.setResLang("IDS_DIALOG_FORMAT", "書式");
 	extfun.setResLang("IDS_SIGNEX_SIGN", "署名入力");

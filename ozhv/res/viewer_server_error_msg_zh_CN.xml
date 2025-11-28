@@ -142,6 +142,7 @@
 	<TYPE code="10609005">在Reporsitory使用加密模块时，发生错误。</TYPE>
 	<TYPE code="10609006">在Reporsitory使用加密模块时，发生错误。</TYPE>
 	<TYPE code="10609007">在Reporsitory使用加密模块时，发生错误。</TYPE>
+	<TYPE code="10701010">不允许的请求。</TYPE>
 	<TYPE code="10901000">服务器到客户端的通信中，发生错误。请检查网络、服务器和协议版本 </TYPE>
 	<TYPE code="10902000">服务器端和客户端之间传送数据中在服务器端发生错误、请检查网络、服务器的协议版本</TYPE>
 	<TYPE code="10902001">无法在客户端读取服务器的数据信息。</TYPE>

@@ -147,6 +147,9 @@ with (__oznamespace__) {
 	extfun.setResLang("ID_CLOSE_REPORT_EXPLORER", "Close the tree");
 	extfun.setResLang("ID_VIEW_REPORT_THUMBNAIL", "显示缩略图");
 	extfun.setResLang("ID_CLOSE_REPORT_THUMBNAIL", "Close the thumbnail");
+	extfun.setResLang("ID_VIEW_REQUIRED", "显示必填字段");
+	extfun.setResLang("ID_VIEW_SIDEBAR", "显示侧边栏");
+	extfun.setResLang("ID_CLOSE_SIDEBAR", "关闭侧边栏");
 	extfun.setResLang("ID_EXPORT_XLSX", "保存为 XLSX");
 	extfun.setResLang("IDS_MSG_PRINT_JOB_SUCCESS", "输出成功。");
 	extfun.setResLang("IDS_MESSAGE_COPY_CLIPBOARD", "已经复制到了剪贴板上 。");
@@ -399,6 +402,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_OPT_MHT_SAVE", "MHT 保存选项");
 	extfun.setResLang("IDS_OPT_SAVE_FORM", "分隔标记");
 	extfun.setResLang("IDS_OPT_PAGE", "页面");
+	extfun.setResLang("IDS_OPT_PAGE_N", "第{N}页");
 	extfun.setResLang("IDS_OPT_FONT", "字体");
 	extfun.setResLang("IDS_OPT_FORMAT", "格式");
 	extfun.setResLang("IDS_OPT_AUTO_FIT", "自动调整");
@@ -724,6 +728,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_BORDER_USER", "自定义");
 	extfun.setResLang("ID_TITLEBAR_THUMBNAIL_TITLE", "缩略图");
 	extfun.setResLang("ID_TITLEBAR_TREE_TITLE", "报表树");
+	extfun.setResLang("ID_TITLEBAR_REQUIRED_TITLE", "必填字段");
 	extfun.setResLang("IDS_SEAL_DESCRIPTION", "Please align the seal recognition area with the green guidelines.");
 	extfun.setResLang("IDS_DIALOG_FORMAT", "格式");
 	extfun.setResLang("IDS_SIGNEX_SIGN", "Give a signature");

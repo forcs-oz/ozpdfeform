@@ -147,6 +147,9 @@ with (__oznamespace__) {
 	extfun.setResLang("ID_CLOSE_REPORT_EXPLORER", "트리 닫기");
 	extfun.setResLang("ID_VIEW_REPORT_THUMBNAIL", "페이지 축소판 보기");
 	extfun.setResLang("ID_CLOSE_REPORT_THUMBNAIL", "페이지 축소판 닫기");
+	extfun.setResLang("ID_VIEW_REQUIRED", "필수 입력 항목 보기");
+	extfun.setResLang("ID_VIEW_SIDEBAR", "사이드바 보기");
+	extfun.setResLang("ID_CLOSE_SIDEBAR", "사이드바 닫기");
 	extfun.setResLang("ID_EXPORT_XLSX", "XLSX 저장");
 	extfun.setResLang("IDS_MSG_PRINT_JOB_SUCCESS", "출력이 성공적으로 끝났습니다.");
 	extfun.setResLang("IDS_MESSAGE_COPY_CLIPBOARD", "클립보드에 복사되었습니다.");
@@ -400,6 +403,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_OPT_MHT_SAVE", "MHT 저장 옵션");
 	extfun.setResLang("IDS_OPT_SAVE_FORM", "저장 형태");
 	extfun.setResLang("IDS_OPT_PAGE", "페이지");
+	extfun.setResLang("IDS_OPT_PAGE_N", "{N} 페이지");
 	extfun.setResLang("IDS_OPT_FONT", "글꼴");
 	extfun.setResLang("IDS_OPT_FORMAT", "서식");
 	extfun.setResLang("IDS_OPT_AUTO_FIT", "자동 맞춤");
@@ -726,6 +730,7 @@ with (__oznamespace__) {
 	extfun.setResLang("IDS_BORDER_USER", "사용자 지정");
 	extfun.setResLang("ID_TITLEBAR_THUMBNAIL_TITLE", "페이지 축소판");
 	extfun.setResLang("ID_TITLEBAR_TREE_TITLE", "트리");
+	extfun.setResLang("ID_TITLEBAR_REQUIRED_TITLE", "필수 입력 항목");
 	extfun.setResLang("IDS_SEAL_DESCRIPTION", "도장 인식 영역을 가이드에 맞추면 자동으로 인식됩니다.");
 	extfun.setResLang("IDS_DIALOG_FORMAT", "서식");
 	extfun.setResLang("IDS_SIGNEX_SIGN", "서명 입력");

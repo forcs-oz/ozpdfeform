@@ -142,6 +142,7 @@
 	<TYPE code="10609005">在Reporsitory使用加密模組時，發生錯誤。</TYPE>
 	<TYPE code="10609006">在Reporsitory使用加密模組時，發生錯誤。</TYPE>
 	<TYPE code="10609007">在Reporsitory使用加密模組時，發生錯誤。</TYPE>
+	<TYPE code="10701010">不允許的請求。</TYPE>
 	<TYPE code="10901000">伺服器到用戶端的通信中，發生錯誤。請檢查網路、伺服器和協定版本。</TYPE>
 	<TYPE code="10902000">伺服器端和用戶端之間傳送資料中在伺服器端發生錯誤、請檢查網路、伺服器的協定版本。</TYPE>
 	<TYPE code="10902001">無法在用戶端讀取伺服器的資料資訊。</TYPE>

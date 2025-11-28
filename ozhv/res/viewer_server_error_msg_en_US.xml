@@ -177,6 +177,7 @@
 	<TYPE code="10701003">Error occurred in forced log-out</TYPE>
 	<TYPE code="10701006">The session has been expired due to time expiration. Please Log in again.</TYPE>
 	<TYPE code="10701007">Denied access. Please ask to administrator.</TYPE>
+	<TYPE code="10701010">This request is not allowed.</TYPE>
 	<TYPE code="10702000"/>
 	<TYPE code="10702001">Administrator only can use. Please check your permission</TYPE>
 	<TYPE code="10702002">Administrator and group administrator only can use. Please check your permission</TYPE>
